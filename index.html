@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shift Status</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+    .banner {
+      background: #0078d4;
+      color: white;
+      padding: 14px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="shift-banner" class="banner">Loading shift status...</div>
+
+  <script>
+    fetch('https://ec2it.eu.deputy.com/calendar?ap=YmdhaW5lcy5lMjc0OGQ5NWZiMTU5MTgwNzM0N2RhMzJlNTJkNmQwMA==&fs=eyJpbnRMb2NhdGlvbklkcyI6MX0=')
+      .then(response => response.text())
+      .then(data => {
+        const jcalData = ICAL.parse(data);
+        const comp = new ICAL.Component(jcalData);
+        const events = comp.getAllSubcomponents("vevent");
+
+        const now = new Date();
+        let currentShift = "No active shift";
+
+        events.forEach(event => {
+          const start = new Date(event.getFirstPropertyValue("dtstart"));
+          const end = new Date(event.getFirstPropertyValue("dtend"));
+          const title = event.getFirstPropertyValue("summary");
+
+          if (now >= start && now <= end) {
+            currentShift = `Currently on ${title}`;
+          }
+        });
+
+        document.getElementById("shift-banner").innerText = currentShift;
+      })
+      .catch(error => {
+        document.getElementById("shift-banner").innerText = "Unable to load shift.";
+        console.error(error);
+      });
+  </script>
+</body>
+</html>
