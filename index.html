@@ -23,7 +23,7 @@
   <div id="shift-banner" class="banner">Loading shift status...</div>
 
   <script>
-    fetch('https://ec2it.eu.deputy.com/calendar?ap=YmdhaW5lcy5lMjc0OGQ5NWZiMTU5MTgwNzM0N2RhMzJlNTJkNmQwMA==&fs=eyJpbnRMb2NhdGlvbklkcyI6MX0=')
+    fetch('calendar.ics')
       .then(response => response.text())
       .then(data => {
         const jcalData = ICAL.parse(data);
