@@ -10,45 +10,39 @@
       font-family: sans-serif;
     }
 
-    .section {
-      padding: 15px;
-    }
-
     .box {
-      padding: 10px;
-      margin-bottom: 20px;
+      padding: 12px;
+      margin: 10px;
       border-radius: 6px;
     }
 
     .helpdesk {
-      background-color: #d4edda; /* light green */
+      background-color: #39ff14; /* light green */
     }
 
     .support {
-      background-color: #fff3cd; /* light yellow */
+      background-color: #FFF01F; /* light yellow */
     }
 
     .entry {
-      margin: 5px 0;
-      font-weight: 500;
+      margin-bottom: 12px;
     }
 
-    h2 {
-      margin-top: 0;
+    .entry b {
+      display: block;
+      font-weight: bold;
+    }
+
+    .entry .time {
+      display: block;
+      margin-top: 2px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="section">
-    <div class="box helpdesk">
-      <h2>Helpdesk</h2>
-      <div id="helpdesk-entries">Loading...</div>
-    </div>
-    <div class="box support">
-      <h2>Support</h2>
-      <div id="support-entries">Loading...</div>
-    </div>
-  </div>
+  <div id="helpdesk-entries" class="box helpdesk">Loading Helpdesk...</div>
+  <div id="support-entries" class="box support">Loading Support...</div>
 
   <script>
     fetch('calendar.ics')
@@ -62,7 +56,6 @@
         const helpdeskContainer = document.getElementById("helpdesk-entries");
         const supportContainer = document.getElementById("support-entries");
 
-        // Clear placeholders
         helpdeskContainer.innerHTML = '';
         supportContainer.innerHTML = '';
 
@@ -82,11 +75,11 @@
 
             const name = match[1];
             const role = match[2];
-            const entryText = `${name} is on ${role} (${timeRange})`;
 
             const entryEl = document.createElement("div");
             entryEl.className = "entry";
-            entryEl.textContent = entryText;
+
+            entryEl.innerHTML = `<b>${name} is on ${role}</b><span class="time">${timeRange}</span>`;
 
             if (role === "Helpdesk") {
               helpdeskContainer.appendChild(entryEl);
@@ -102,8 +95,8 @@
         if (!hasSupport) supportContainer.textContent = "No one currently on Support.";
       })
       .catch(error => {
-        document.getElementById("helpdesk-entries").innerText = "Unable to load calendar.";
-        document.getElementById("support-entries").innerText = "Unable to load calendar.";
+        document.getElementById("helpdesk-entries").textContent = "Unable to load calendar.";
+        document.getElementById("support-entries").textContent = "Unable to load calendar.";
         console.error(error);
       });
   </script>
