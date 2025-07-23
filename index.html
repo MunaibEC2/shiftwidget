@@ -9,18 +9,46 @@
       margin: 0;
       font-family: sans-serif;
     }
-    .banner {
-      background: #0078d4;
-      color: white;
-      padding: 14px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
+
+    .section {
+      padding: 15px;
+    }
+
+    .box {
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+    }
+
+    .helpdesk {
+      background-color: #d4edda; /* light green */
+    }
+
+    .support {
+      background-color: #fff3cd; /* light yellow */
+    }
+
+    .entry {
+      margin: 5px 0;
+      font-weight: 500;
+    }
+
+    h2 {
+      margin-top: 0;
     }
   </style>
 </head>
 <body>
-  <div id="shift-banner" class="banner">Loading shift status...</div>
+  <div class="section">
+    <div class="box helpdesk">
+      <h2>Helpdesk</h2>
+      <div id="helpdesk-entries">Loading...</div>
+    </div>
+    <div class="box support">
+      <h2>Support</h2>
+      <div id="support-entries">Loading...</div>
+    </div>
+  </div>
 
   <script>
     fetch('calendar.ics')
@@ -31,7 +59,15 @@
         const events = comp.getAllSubcomponents("vevent");
 
         const now = new Date();
-        let currentShift = "No active shift";
+        const helpdeskContainer = document.getElementById("helpdesk-entries");
+        const supportContainer = document.getElementById("support-entries");
+
+        // Clear placeholders
+        helpdeskContainer.innerHTML = '';
+        supportContainer.innerHTML = '';
+
+        let hasHelpdesk = false;
+        let hasSupport = false;
 
         events.forEach(event => {
           const start = new Date(event.getFirstPropertyValue("dtstart"));
@@ -39,14 +75,35 @@
           const title = event.getFirstPropertyValue("summary");
 
           if (now >= start && now <= end) {
-            currentShift = `Currently on ${title}`;
+            const timeRange = `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')} - ${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`;
+
+            const match = title.match(/^(.+?)\s@.*\s(Helpdesk|Support)$/);
+            if (!match) return;
+
+            const name = match[1];
+            const role = match[2];
+            const entryText = `${name} is on ${role} (${timeRange})`;
+
+            const entryEl = document.createElement("div");
+            entryEl.className = "entry";
+            entryEl.textContent = entryText;
+
+            if (role === "Helpdesk") {
+              helpdeskContainer.appendChild(entryEl);
+              hasHelpdesk = true;
+            } else if (role === "Support") {
+              supportContainer.appendChild(entryEl);
+              hasSupport = true;
+            }
           }
         });
 
-        document.getElementById("shift-banner").innerText = currentShift;
+        if (!hasHelpdesk) helpdeskContainer.textContent = "No one currently on Helpdesk.";
+        if (!hasSupport) supportContainer.textContent = "No one currently on Support.";
       })
       .catch(error => {
-        document.getElementById("shift-banner").innerText = "Unable to load shift.";
+        document.getElementById("helpdesk-entries").innerText = "Unable to load calendar.";
+        document.getElementById("support-entries").innerText = "Unable to load calendar.";
         console.error(error);
       });
   </script>
