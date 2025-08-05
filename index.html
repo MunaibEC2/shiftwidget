@@ -8,24 +8,45 @@
     body {
       margin: 0;
       font-family: sans-serif;
+      background-color: #f0f0f0;
     }
 
     .box {
-      padding: 12px;
-      margin: 10px;
+      position: relative;
+      padding: 16px 16px 16px 50px;
+      margin: 20px;
       border-radius: 6px;
+      background-color: #007BFF; /* blue background */
+      color: white;
+      overflow: hidden;
     }
 
-    .helpdesk {
-      background-color: #39ff14; /* light green */
+    .ribbon {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 12px;
+      height: 100%;
     }
 
-    .support {
-      background-color: #FFF01F; /* light yellow */
+    .ribbon.helpdesk {
+      background-color: #39ff14; /* green */
+    }
+
+    .ribbon.support {
+      background-color: #FFF01F; /* yellow */
     }
 
     .entry {
       margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .entry-icon {
+      font-size: 20px;
+      margin-right: 8px;
     }
 
     .entry b {
@@ -35,14 +56,21 @@
 
     .entry .time {
       display: block;
-      margin-top: 2px;
       font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div id="helpdesk-entries" class="box helpdesk">Loading Helpdesk...</div>
-  <div id="support-entries" class="box support">Loading Support...</div>
+
+  <div class="box" id="helpdesk-entries">
+    <div class="ribbon helpdesk"></div>
+    Loading Helpdesk...
+  </div>
+
+  <div class="box" id="support-entries">
+    <div class="ribbon support"></div>
+    Loading Support...
+  </div>
 
   <script>
     fetch('calendar.ics')
@@ -56,8 +84,8 @@
         const helpdeskContainer = document.getElementById("helpdesk-entries");
         const supportContainer = document.getElementById("support-entries");
 
-        helpdeskContainer.innerHTML = '';
-        supportContainer.innerHTML = '';
+        helpdeskContainer.innerHTML = '<div class="ribbon helpdesk"></div>';
+        supportContainer.innerHTML = '<div class="ribbon support"></div>';
 
         let hasHelpdesk = false;
         let hasSupport = false;
@@ -79,7 +107,15 @@
             const entryEl = document.createElement("div");
             entryEl.className = "entry";
 
-            entryEl.innerHTML = `<b>${name} is on ${role}</b><span class="time">${timeRange}</span>`;
+            const icon = role === "Helpdesk" ? "📞" : "🪑";
+
+            entryEl.innerHTML = `
+              <span class="entry-icon">${icon}</span>
+              <div>
+                <b>${name} is on ${role}</b>
+                <span class="time">${timeRange}</span>
+              </div>
+            `;
 
             if (role === "Helpdesk") {
               helpdeskContainer.appendChild(entryEl);
@@ -91,8 +127,13 @@
           }
         });
 
-        if (!hasHelpdesk) helpdeskContainer.textContent = "No one currently on Helpdesk.";
-        if (!hasSupport) supportContainer.textContent = "No one currently on Support.";
+        if (!hasHelpdesk) {
+          helpdeskContainer.innerHTML += "<div>No one currently on Helpdesk.</div>";
+        }
+
+        if (!hasSupport) {
+          supportContainer.innerHTML += "<div>No one currently on Support.</div>";
+        }
       })
       .catch(error => {
         document.getElementById("helpdesk-entries").textContent = "Unable to load calendar.";
@@ -100,5 +141,6 @@
         console.error(error);
       });
   </script>
+
 </body>
 </html>
