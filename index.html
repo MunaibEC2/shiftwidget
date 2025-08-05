@@ -7,70 +7,70 @@
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f0f0f0;
     }
 
-    .box {
-      position: relative;
-      padding: 16px 16px 16px 50px;
-      margin: 20px;
-      border-radius: 6px;
-      background-color: #007BFF; /* blue background */
-      color: white;
-      overflow: hidden;
-    }
-
-    .ribbon {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 12px;
-      height: 100%;
-    }
-
-    .ribbon.helpdesk {
-      background-color: #39ff14; /* green */
-    }
-
-    .ribbon.support {
-      background-color: #FFF01F; /* yellow */
-    }
-
-    .entry {
-      margin-bottom: 12px;
+    .entry-card {
       display: flex;
       align-items: center;
-      gap: 8px;
+      border: 4px solid #002868; /* Navy border */
+      background-color: white;
+      border-radius: 4px;
+      margin: 20px;
+      width: fit-content;
     }
 
-    .entry-icon {
+    .icon-box {
+      background-color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-box span {
+      font-size: 32px;
+      color: #002868;
+    }
+
+    .info-box {
+      background-color: #2B7CD3;
+      color: white;
+      padding: 20px 30px;
+      text-align: center;
+    }
+
+    .info-box .name {
       font-size: 20px;
-      margin-right: 8px;
-    }
-
-    .entry b {
-      display: block;
       font-weight: bold;
+      margin-bottom: 6px;
     }
 
-    .entry .time {
-      display: block;
-      font-size: 14px;
+    .info-box .role {
+      font-size: 16px;
+    }
+
+    #helpdesk-entries,
+    #support-entries {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 20px;
+      color: #002868;
     }
   </style>
 </head>
 <body>
 
-  <div class="box" id="helpdesk-entries">
-    <div class="ribbon helpdesk"></div>
-    Loading Helpdesk...
-  </div>
+  <div class="section-title">Helpdesk</div>
+  <div id="helpdesk-entries">Loading Helpdesk...</div>
 
-  <div class="box" id="support-entries">
-    <div class="ribbon support"></div>
-    Loading Support...
-  </div>
+  <div class="section-title">Support</div>
+  <div id="support-entries">Loading Support...</div>
 
   <script>
     fetch('calendar.ics')
@@ -84,8 +84,8 @@
         const helpdeskContainer = document.getElementById("helpdesk-entries");
         const supportContainer = document.getElementById("support-entries");
 
-        helpdeskContainer.innerHTML = '<div class="ribbon helpdesk"></div>';
-        supportContainer.innerHTML = '<div class="ribbon support"></div>';
+        helpdeskContainer.innerHTML = '';
+        supportContainer.innerHTML = '';
 
         let hasHelpdesk = false;
         let hasSupport = false;
@@ -96,43 +96,40 @@
           const title = event.getFirstPropertyValue("summary");
 
           if (now >= start && now <= end) {
-            const timeRange = `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')} - ${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`;
-
             const match = title.match(/^(.+?)\s@.*\s(Helpdesk|Support)$/);
             if (!match) return;
 
             const name = match[1];
             const role = match[2];
-
-            const entryEl = document.createElement("div");
-            entryEl.className = "entry";
-
             const icon = role === "Helpdesk" ? "📞" : "🪑";
 
-            entryEl.innerHTML = `
-              <span class="entry-icon">${icon}</span>
-              <div>
-                <b>${name} is on ${role}</b>
-                <span class="time">${timeRange}</span>
+            const entryCard = document.createElement("div");
+            entryCard.className = "entry-card";
+
+            entryCard.innerHTML = `
+              <div class="icon-box"><span>${icon}</span></div>
+              <div class="info-box">
+                <div class="name">${name}</div>
+                <div class="role">Is Currently On ${role}</div>
               </div>
             `;
 
             if (role === "Helpdesk") {
-              helpdeskContainer.appendChild(entryEl);
+              helpdeskContainer.appendChild(entryCard);
               hasHelpdesk = true;
             } else if (role === "Support") {
-              supportContainer.appendChild(entryEl);
+              supportContainer.appendChild(entryCard);
               hasSupport = true;
             }
           }
         });
 
         if (!hasHelpdesk) {
-          helpdeskContainer.innerHTML += "<div>No one currently on Helpdesk.</div>";
+          helpdeskContainer.textContent = "No one currently on Helpdesk.";
         }
 
         if (!hasSupport) {
-          supportContainer.innerHTML += "<div>No one currently on Support.</div>";
+          supportContainer.textContent = "No one currently on Support.";
         }
       })
       .catch(error => {
