@@ -28,7 +28,7 @@
     }
 
     .icon-box span {
-      font-size: 32px;
+      font-size: 40px;
       color: #002664;
     }
 
@@ -97,7 +97,7 @@
 
             const name = match[1];
             const role = match[2];
-            const icon = role === "Helpdesk" ? "📞" : "🪑";
+            const icon = role === "Helpdesk" ? "<i class='bx bx-phone'>" : "<i class='bx bx-chair'>";
 
             const entryCard = document.createElement("div");
             entryCard.className = "entry-card";
