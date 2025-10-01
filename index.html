@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Shift Status</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
+
+  <!-- Font: Inter (modern & smooth) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <!-- iCal.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
+
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', sans-serif;
       background-color: transparent;
     }
 
@@ -18,6 +26,8 @@
       border: 2px solid white;
       background-color: #002664;
       width: 95%;
+      border-radius: 8px;
+      margin-bottom: 4px;
     }
 
     .icon-box {
@@ -26,9 +36,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
     }
 
-    .icon-box span {
+    .icon-box i {
       font-size: 40px;
       color: #002664;
     }
@@ -38,21 +50,23 @@
       color: white;
       padding: 20px 30px;
       text-align: center;
+      flex-grow: 1;
     }
 
     .info-box .name {
       font-size: 20px;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 6px;
     }
 
     .info-box .role {
       font-size: 16px;
+      font-weight: 400;
     }
 
     #helpdesk-entries,
     #support-entries {
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .section-title {
@@ -98,13 +112,13 @@
 
             const name = match[1];
             const role = match[2];
-            const icon = role === "Helpdesk" ? "<i class='bx bx-phone'>" : "<i class='bx bx-chair'>";
+            const icon = role === "Helpdesk" ? "<i class='bx bx-phone'></i>" : "<i class='bx bx-chair'></i>";
 
             const entryCard = document.createElement("div");
             entryCard.className = "entry-card";
 
             entryCard.innerHTML = `
-              <div class="icon-box"><span>${icon}</span></div>
+              <div class="icon-box">${icon}</div>
               <div class="info-box">
                 <div class="name">${name}</div>
                 <div class="role">Is Currently On ${role}</div>
