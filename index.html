@@ -14,6 +14,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
@@ -22,19 +26,23 @@
 
     .entry-card {
       display: flex;
-      align-items: center;
-      border: 2px solid white;
-      background-color: #002664;
       width: 95%;
-      margin-bottom: 4px;
+      margin: 8px auto;
+      background-color: #002664;
+      border: 2px solid white;
+      border-radius: 0;
+      overflow: hidden;
+      height: 100px;
     }
 
     .icon-box {
       background-color: white;
-      padding: 30px;
+      width: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 100%;
+      padding: 0; /* Remove any extra padding */
     }
 
     .icon-box i {
@@ -43,17 +51,19 @@
     }
 
     .info-box {
+      flex: 1;
       background-color: #002664;
       color: white;
-      padding: 20px 30px;
-      text-align: center;
-      flex-grow: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .info-box .name {
       font-size: 20px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .info-box .role {
