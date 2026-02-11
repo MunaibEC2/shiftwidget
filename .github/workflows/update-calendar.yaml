@@ -1,0 +1,30 @@
+name: Update Calendar
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:      
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download calendar
+        run: |
+          curl -L "https://ec2it.eu.deputy.com/calendar?ap=YmdhaW5lcy5lMjc0OGQ5NWZiMTU5MTgwNzM0N2RhMzJlNTJkNmQwMA==&fs=eyJpbnRMb2NhdGlvbklkcyI6MX0=" \
+            -o calendar.ics
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add calendar.ics
+          git commit -m "Update calendar" || echo "No changes to commit"
+
+      - name: Push changes
+        run: |
+          git push
